@@ -1,0 +1,60 @@
+# Default sandboxes configuration file.
+#
+# This is merged with other sandbox configuration in the following order:
+# 1. command line flags
+# 2. user configuration for servers taken from ~/wst.yaml
+# 3. user common configuration taken from ~/wst.yaml
+# 4. project configuration for servers
+# 5. project common configuration (this file)
+#
+# The order is first applied on common sandbox configuration and then on the specific sandbox configuration. Those
+# configurations are then merged.
+
+# Common configuration that is the same for all sandboxes (usually defined in project)
+common:
+  dirs:
+    conf: /etc
+    script: /var/www
+    run: /run
+
+#   hooks:
+#     start:
+#       command:
+#         path: /path/to/executable <args>
+#     stop:
+#       signal: SIGTERM
+#     reload:
+#       signal: SIGUSR2
+
+# Local sandbox configuration
+# local: ~
+
+# Container sandbox is a common sandbox for docker and kubernetes
+#container:
+#  hooks:
+#    reload:
+#      native:
+#        enabled: false
+#    restart:
+#      native:
+#        enable: true
+#    stop:
+#      native:
+#        enable: true
+  # image:
+  #   name: image/name:tag
+
+# Docker sandbox configuration
+# docker:
+#  registry:
+#    auth:
+#      username: <username>
+#      password: <password>
+
+# Kubernetes sandbox configuration
+#kubernetes:
+#  hooks:
+#    restart:
+#      native:
+#        enable: true
+

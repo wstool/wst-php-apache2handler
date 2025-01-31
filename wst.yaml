@@ -1,0 +1,28 @@
+version: "0.1"
+name: PHP apache2handler
+description: PHP Apaches 2 handler with httpd server specifications for testing apache2handler SAPI
+spec:
+  environments: environments.yaml
+  instances: spec/instances/*.yaml
+  sandboxes: sandboxes.yaml
+  servers: servers/*/*/server.yaml
+  workspace: workspace/
+  defaults:
+    service:
+      sandbox: local
+      server:
+        tag: default
+    timeouts:
+      action: 10000
+      actions: 120000
+    parameters:
+      # FPM params
+      fpm_binary: php-fpm
+      # Apache HTTPD params
+      #httpd_binary: apache2
+      #httpd_modules: /usr/lib/apache2/modules
+      # For local httpd use
+      httpd_binary: /usr/local/apache2/bin/httpd
+      httpd_modules: /usr/local/apache2/modules
+      # Nginx params
+      nginx_binary: nginx

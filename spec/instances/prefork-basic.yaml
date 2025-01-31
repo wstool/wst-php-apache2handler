@@ -1,0 +1,13 @@
+title: Basic prefork tests
+
+name: prefork-basic
+
+description: |
+  Set of tests to verify httpd prefork integration.
+
+labels: [test, prefork]
+
+extends:
+  name: base-basic
+  parameters:
+    mpm: prefork
