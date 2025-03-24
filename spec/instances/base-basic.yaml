@@ -70,9 +70,14 @@ actions:
   - expect/httpd:
       response:
         body: /アダプタ.php
+  - request/httpd:
+      path: /q?file.php
+  - expect/httpd:
+      response:
+        status: 404
   - stop:
       when: always
-  - parallel:
+  - expect/httpd:
       when: always
-      actions:
-        - expect/httpd/server_stop
+      custom:
+        name: server_stop
