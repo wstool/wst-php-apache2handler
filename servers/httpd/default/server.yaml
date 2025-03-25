@@ -38,3 +38,12 @@ actions:
         match: 'regexp'
         messages:
           - '.* caught SIGTERM, shutting down'
+  sequential:
+    start:
+      actions:
+        - start
+        - expect/httpd/server_start
+    stop:
+      actions:
+        - stop
+        - expect/httpd/server_stop

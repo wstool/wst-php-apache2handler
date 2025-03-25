@@ -40,8 +40,7 @@ services:
       scripts: true
 
 actions:
-  - start
-  - expect/httpd/server_start
+  - sequential/httpd/start
   - parallel:
       actions:
         - sequential:
@@ -63,9 +62,5 @@ actions:
                   response:
                     request: r2
                     body: /index.php|a=1&b=2|/pi
-  - stop:
+  - sequential/httpd/stop:
       when: always
-  - expect/httpd:
-      when: always
-      custom:
-        name: server_stop
