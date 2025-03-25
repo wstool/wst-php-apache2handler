@@ -1,0 +1,71 @@
+title: Parallel basic test base
+
+name: base-parallel-basic
+
+description: |
+  Base instance for the set of test PHP handler by hitting requests in parallel.
+
+abstract: true
+
+parameters:
+  httpd_mpm: prefork
+
+environments:
+  local:
+    ports:
+      start: 8100
+      end: 8110
+
+resources:
+  scripts:
+    index.php: |
+      <?php
+      $envs = ['SCRIPT_NAME', 'QUERY_STRING', 'PATH_INFO'];
+      $vals = [];
+      foreach ($envs as $env) {
+        $vals[] = $_SERVER[$env] ?? 'na';
+      }
+      echo implode('|', $vals);
+
+services:
+  httpd:
+    public: true
+    server:
+      name: httpd
+      configs:
+        httpd_conf:
+          parameters:
+            mpm: '{{ .Parameters.GetString "httpd_mpm" }}'
+    resources:
+      scripts: true
+
+actions:
+  - start
+  - expect/httpd/server_start
+  - parallel:
+      actions:
+        - sequential:
+            actions:
+              - request/httpd:
+                  path: /index.php
+                  id: r1
+              - expect/httpd:
+                  response:
+                    request: r1
+                    body: /index.php||na
+        - sequential:
+            actions:
+              - request/httpd:
+                  path: /index.php/pi?a=1&b=2
+                  encode_path: false
+                  id: r2
+              - expect/httpd:
+                  response:
+                    request: r2
+                    body: /index.php|a=1&b=2|/pi
+  - stop:
+      when: always
+  - expect/httpd:
+      when: always
+      custom:
+        name: server_stop

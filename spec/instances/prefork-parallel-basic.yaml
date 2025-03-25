@@ -1,0 +1,13 @@
+title: Basic parallel prefork tests
+
+name: prefork-parallel-basic
+
+description: |
+  Basic parallel tests to verify httpd prefork integration.
+
+labels: [test, prefork]
+
+extends:
+  name: base-parallel-basic
+  parameters:
+    mpm: prefork
