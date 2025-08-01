@@ -1,0 +1,57 @@
+title: Test for PHP admin value using disable_functions
+
+name: php-admin-value-disable-functions
+
+description: |
+  PHP admin value testing to test issue reported in https://github.com/php/php-src/issues/19018 when disable_functions
+  and some other INIs are not working.
+
+labels: [test, bug, prefork, php_admin_value]
+
+environments:
+  local:
+    ports:
+      start: 8100
+      end: 8110
+
+resources:
+  scripts:
+    index.php: |
+      <?php
+      var_dump(ini_get('memory_limit'));
+      var_dump(ini_get('disable_functions'));
+      var_dump(function_exists('exec'));
+      $output=null;
+      $retval=null;
+      exec('whoami', $output, $retval);
+      echo "Returned with status $retval and output:\n";
+      print_r($output);
+
+services:
+  httpd:
+    public: true
+    server:
+      name: httpd
+      configs:
+        httpd_conf:
+          parameters:
+            php_admin_values:
+              disable_functions: exec
+              memory_limit: 64M
+    resources:
+      scripts: true
+
+actions:
+  - start
+  - expect/httpd/server_start
+  - request/httpd:
+      path: /index.php
+  - expect/httpd:
+      response:
+        body: ok
+  - stop:
+      when: always
+  - expect/httpd:
+      when: always
+      custom:
+        name: server_stop
