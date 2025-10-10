@@ -20,6 +20,7 @@ resources:
       <?php
       var_dump(ini_get('memory_limit'));
       var_dump(ini_get('disable_functions'));
+      var_dump(ini_get('upload_tmp_dir'));
       var_dump(function_exists('exec'));
       $output=null;
       $retval=null;
@@ -38,6 +39,8 @@ services:
             php_admin_values:
               disable_functions: exec
               memory_limit: 64M
+              upload_tmp_dir: /tmp
+
     resources:
       scripts: true
 
