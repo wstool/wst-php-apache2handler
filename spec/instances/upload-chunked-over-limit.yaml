@@ -1,0 +1,57 @@
+title: Test upload chunked over limit
+
+name: upload-chunked-over-limit
+
+description: |
+  Testing slow chunked upload that is over limit. This is to address https://github.com/php/php-src/pull/2180 which was
+  for bug 
+
+labels: [test, bug, prefork, php_admin_value]
+
+environments:
+  local:
+    ports:
+      start: 8100
+      end: 8110
+
+resources:
+  scripts:
+    index.php: |
+      <?php
+      echo strlen(file_get_contents('php://input'));
+
+services:
+  httpd:
+    public: true
+    server:
+      name: httpd
+      configs:
+        httpd_conf:
+          parameters: {}
+
+    resources:
+      scripts: true
+
+actions:
+  - start
+  - expect/httpd/server_start
+  - request/httpd:
+      path: /index.php
+      method: POST
+      body:
+        # content: '{{ (repeat 50 "t") }}'
+        content: '01234567890123456789012345678901234567890123456789'
+        transfer:
+          encoding: none
+          chunk_size: 25
+          chunk_delay: 1000
+  - expect/httpd:
+      response:
+        body:
+          content: '2000'
+  - stop:
+      when: always
+  - expect/httpd:
+      when: always
+      custom:
+        name: server_stop
