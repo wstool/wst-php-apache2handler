@@ -18,15 +18,8 @@ resources:
   scripts:
     index.php: |
       <?php
-      var_dump(ini_get('memory_limit'));
       var_dump(ini_get('disable_functions'));
-      var_dump(ini_get('upload_tmp_dir'));
       var_dump(function_exists('exec'));
-      $output=null;
-      $retval=null;
-      exec('whoami', $output, $retval);
-      echo "Returned with status $retval and output:\n";
-      print_r($output);
 
 services:
   httpd:
@@ -51,7 +44,9 @@ actions:
       path: /index.php
   - expect/httpd:
       response:
-        body: ok
+        body: |
+          string(4) "exec"
+          bool(false)
   - stop:
       when: always
   - expect/httpd:
